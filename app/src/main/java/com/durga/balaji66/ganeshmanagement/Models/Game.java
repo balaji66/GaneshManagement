@@ -1,5 +1,10 @@
 package com.durga.balaji66.ganeshmanagement.Models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 public class Game {
 
     private String candidate_name;

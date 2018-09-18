@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -23,12 +25,19 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private Button mLogin;
     private TextInputEditText mPhone, mPassword;
+    public final String TAG="TestActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initializeViews();
         initializeListeners();
+        int tid=android.os.Process.myTid();
+        Log.d(TAG,"priority before change = " + android.os.Process.getThreadPriority(tid));
+        Log.d(TAG,"priority before change = "+Thread.currentThread().getPriority());
+        android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        Log.d(TAG,"priority after change = " + android.os.Process.getThreadPriority(tid));
+        Log.d(TAG,"priority after change = " + Thread.currentThread().getPriority());
         if (!new UserSharedPreferenceManager(this).isUserLogOut()) {
             startHomeActivity();
         }
@@ -145,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
                 alertDialog.show();
                 Toast.makeText(getApplicationContext(),"Check Your Internet Connection",Toast.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
     }

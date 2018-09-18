@@ -10,11 +10,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.durga.balaji66.ganeshmanagement.Apis.APIUrl;
 import com.durga.balaji66.ganeshmanagement.Models.Game;
 import com.durga.balaji66.ganeshmanagement.Adapters.GameAdapter;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -48,26 +52,24 @@ public class AnxietyRegisteredPlayersActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        Call<List<Game>> call = APIUrl.getmInstance().getApi().registeredPlayerAnxiety();
+        Call<SomeClass> call = APIUrl.getmInstance().getApi().registeredPlayerAnxiety();
 
-        call.enqueue(new Callback<List<Game>>() {
+        call.enqueue(new Callback<SomeClass>() {
             @Override
-            public void onResponse(@NonNull Call<List<Game>> call, @NonNull Response<List<Game>> response) {
+            public void onResponse(@NonNull Call<SomeClass> call, @NonNull Response<SomeClass> response) {
+                ArrayList<Game> user_array;
 
                 progressDialog.dismiss();
-                List<Game> list = response.body();
-                assert list != null;
-                for(Game g : list)
-                {
-                    Log.d("candidate_name",g.getCandidate_name());
-                    Log.d("father_name",g.getFather_name());
-                }
-
-                adapter = new GameAdapter(list, AnxietyRegisteredPlayersActivity.this);
+                //List<Game> list = response.body();
+                assert response.body() != null;
+                user_array= new ArrayList<>(response.body().getDetails());
+                adapter = new GameAdapter(user_array, AnxietyRegisteredPlayersActivity.this);
                 recyclerViewMessages.setAdapter(adapter);
+                //adapter = new GameAdapter(list, AnxietyRegisteredPlayersActivity.this);
+                //recyclerViewMessages.setAdapter(adapter);
             }
             @Override
-            public void onFailure(@NonNull Call<List<Game>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<SomeClass> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
 
                 final AlertDialog alertDialog =new AlertDialog.Builder(AnxietyRegisteredPlayersActivity.this).create();
@@ -83,7 +85,7 @@ public class AnxietyRegisteredPlayersActivity extends AppCompatActivity {
                     }
                 });
                 alertDialog.show();
-                //Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
 
                 //Toast.makeText(getApplicationContext(),"Check Your Internet Connection",Toast.LENGTH_LONG).show();
 
